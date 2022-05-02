@@ -1,7 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connections');
 
-// create our Post model
+// create our Post model - adding all this in our model method allows us to use it in all the routes in post-routes.js without having to ask for it becuase it's already asked to be included here
 class Post extends Model {
   static upvote(body, models) {
     return models.Vote.create({
