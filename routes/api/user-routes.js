@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User, Post, Vote } = require('../../models');
+const { User, Post, Vote, Comment } = require('../../models');
 const { restore } = require('../../models/User');
 
 // GET /api/users
@@ -18,10 +18,22 @@ router.get('/', (req, res) => {
 // GET /api/users/1
 router.get('/:id', (req, res) => {
   User.findOne({
+    attributes: { exclude: ['password'] },
+    where: {
+      id: req.params.id
+    },
     include: [
       {
         model: Post,
-        attributes: ['id', 'titel', 'post_url', 'created_at']
+        attributes: ['id', 'title', 'post_url', 'created_at']
+      },
+      {
+        model: Comment,
+        attributes: ['id', 'comment_text', 'created_at'],
+        include: {
+          model: Post,
+          attributes: ['title']
+        }
       },
       {
         model: Post,
@@ -78,7 +90,7 @@ router.post('/login', (req, res) => {
       return;
     }
     res.json({ user: dbUserData, message: 'You are now logged in!' });
-  });  
+  });
 });
 
 // PUT /api/users/1
